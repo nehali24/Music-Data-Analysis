@@ -1,0 +1,201 @@
+---
+title: "Music data"
+author: "nehali"
+date: "04/07/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+
+```{r}
+chord <- read.csv("bb_chords.csv")
+chord
+```
+ 
+
+```{r}
+head(chord)
+```
+
+
+
+```{r}
+bb_count <- chord %>%
+  count(chord,sort = TRUE)
+bb_count
+
+```
+
+```{r}
+bb_20 <- bb_count %>%
+  head(20)
+bb_20
+```
+
+
+```{r}
+bb_20 %>%
+  mutate(share = n / sum(n), chord = reorder(chord, share)) %>%
+  
+  ggplot(aes(chord,  share, fill = chord)) +
+  geom_col() +
+  coord_flip() +
+  ylab("Share of total chords") +
+  xlab("Chord")
+  
+  
+```
+
+
+```{r}
+bigram_count <- chord %>%
+  
+  mutate(next_chord = lead(chord), 
+         next_title = lead(title),
+         bigram = paste(chord, next_chord)) %>%
+         filter(title == next_title) %>%
+         count(bigram, sort = TRUE) %>%
+  head(20)
+
+bigram_count
+```
+
+```{r}
+bigram_count %>%
+  mutate(share = n / sum(n), bigram = reorder(bigram, share)) %>%
+  
+  ggplot(aes(bigram,  share, fill = bigram)) +
+  geom_col() +
+  coord_flip() +
+  ylab("Share of total chord changes") +
+  xlab("Chord change")
+```
+
+
+```{r}
+chord
+```
+
+
+
+```{r}
+top_30 <-  chord %>%
+  select(artist, title) %>%
+  unique() %>%
+head(30)
+
+top_30
+
+  
+```
+
+```{r}
+bb_20
+```
+```{r}
+chord
+```
+```{r}
+top_30
+```
+
+
+```{r}
+
+tags <- tibble(
+  artist = c('Abba', 'Billy Joel', 'Elton John', 'Stevie Wonder', 'The Rolling Stones', 'The Beatles', 'Eric Clapton'),
+  instrument = c('piano', 'piano', 'piano', 'piano', 'guitar', 'guitar', 'guitar'))
+
+
+bb_tag <- chord %>%
+  inner_join(tags)
+
+
+bb_tag
+  
+  
+```
+
+```{r}
+top_20  <- bb_count$chord[1:20]
+top_20
+```
+
+```{r}
+bb_tag
+```
+
+```{r}
+top_20 <- bb_count$chord[1:20]
+top_20
+```
+
+
+```{r}
+bb_tag %>%
+  filter(chord %in% top_20) %>%
+  count(chord,instrument, sort = TRUE) %>%
+  ggplot(aes(chord, n, fill = chord)) +
+  geom_col() +         
+  facet_grid(~instrument) +
+  coord_flip() +
+    ylab("Total chords") +
+    xlab("Chord") 
+
+  
+```
+
+
+```{r}
+bb_tag
+```
+
+
+
+```{r}
+top_20_bigram <- bigram_count$bigram[1:20]
+top_20_bigram
+```
+
+```{r}
+bb_tag %>%
+  filter(chord %in% top_20) %>%
+  count(chord, instrument, sort = TRUE) %>%
+  ggplot(aes(chord, n, fill = chord)) +
+  geom_col() +
+  facet_grid(~instrument) +
+  coord_flip() +
+  ylab('Total chords') +
+  xlab('Chord') +
+  theme(legend.position="none") 
+
+  
+```
+
+
+```{r}
+
+bb_tag %>%
+  mutate(next_chord = lead(chord),
+         next_title = lead(title),
+         bigram = paste(chord, next_chord)) %>%
+  filter(title == next_title) %>%
+  count(bigram,instrument, sort = TRUE) %>%
+  filter(bigram %in% top_20_bigram) %>%
+  ggplot(aes(bigram, n, fill = bigram)) +
+  geom_col() +
+  facet_grid(~instrument) +
+  coord_flip() +
+  ylab("Total Bigram") +
+  xlab("Bigram")
+
+```
+
