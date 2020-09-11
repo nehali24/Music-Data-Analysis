@@ -7,3 +7,8 @@ During analysis of this dataset i would see that chords that were being chosen m
  
  After insert data colums for artists and instrument i could plot the chords used on diffrent instrument. Here i have chosen Guitar and Piano. From the plot a comparison could be 
  seen clearly that how selection of chords varies with instument being played on.
+ 
+ 
+ ![music](https://user-images.githubusercontent.com/60546284/92947652-2dbacf80-f450-11ea-9e32-af985ac4dfb7.png)
+![music2](https://user-images.githubusercontent.com/60546284/92947694-3a3f2800-f450-11ea-86a7-d96621cd1fe6.png)
+
